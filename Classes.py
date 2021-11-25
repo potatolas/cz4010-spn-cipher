@@ -101,16 +101,16 @@ class SPN:
         round_key_binary_array = convert_int_to_binary_array(round_key)
         plaintext_binary_array = convert_int_to_binary_array(plaintext)
         xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
-        print(xor_result)
+        xor_result_array = split_16_bits_to_4_bit_int(xor_result)
 
         # num_layers - 1
         for round in range(1, self.num_layers):
             # print(format(int(xor_result.hex(), 16), '016b'))
             # substitution layer
-            sbox_1_result = self.layers[f'layer {round}']['sbox 1'].sub(int(xor_result.hex()[0], 16))
-            sbox_2_result = self.layers[f'layer {round}']['sbox 2'].sub(int(xor_result.hex()[1], 16))
-            sbox_3_result = self.layers[f'layer {round}']['sbox 3'].sub(int(xor_result.hex()[2], 16))
-            sbox_4_result = self.layers[f'layer {round}']['sbox 4'].sub(int(xor_result.hex()[3], 16))
+            sbox_1_result = self.layers[f'layer {round}']['sbox 1'].sub(xor_result_array[0])
+            sbox_2_result = self.layers[f'layer {round}']['sbox 2'].sub(xor_result_array[1])
+            sbox_3_result = self.layers[f'layer {round}']['sbox 3'].sub(xor_result_array[2])
+            sbox_4_result = self.layers[f'layer {round}']['sbox 4'].sub(xor_result_array[3])
             sbox_result = format(sbox_1_result, '04b') + format(sbox_2_result, '04b') + format(sbox_3_result, '04b') + format(sbox_4_result, '04b')
             # print(sbox_result)
             # print(int(sbox_result, 2))
@@ -119,18 +119,23 @@ class SPN:
 
             # xor with round key
             round_key = keys.pop(0)
-            xor_result = bytes(a ^ b for a, b in zip(round_key, pbox_result.to_bytes(2, 'big')))
+            round_key_binary_array = convert_int_to_binary_array(round_key)
+            plaintext_binary_array = convert_int_to_binary_array(pbox_result)
+            xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
+            xor_result_array = split_16_bits_to_4_bit_int(xor_result)
 
         # final substitution layer
-        sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].sub(int(xor_result.hex()[0], 16))
-        sbox_2_result = self.layers[f'layer {self.num_layers}']['sbox 2'].sub(int(xor_result.hex()[1], 16))
-        sbox_3_result = self.layers[f'layer {self.num_layers}']['sbox 3'].sub(int(xor_result.hex()[2], 16))
-        sbox_4_result = self.layers[f'layer {self.num_layers}']['sbox 4'].sub(int(xor_result.hex()[3], 16))
+        sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].sub(xor_result_array[0])
+        sbox_2_result = self.layers[f'layer {self.num_layers}']['sbox 2'].sub(xor_result_array[1])
+        sbox_3_result = self.layers[f'layer {self.num_layers}']['sbox 3'].sub(xor_result_array[2])
+        sbox_4_result = self.layers[f'layer {self.num_layers}']['sbox 4'].sub(xor_result_array[3])
         sbox_result = format(sbox_1_result, '04b') + format(sbox_2_result, '04b') + format(sbox_3_result, '04b') + format(sbox_4_result, '04b')
 
         # final xor with round key
         round_key = keys.pop(0)
-        ciphertext = bytes(a ^ b for a, b in zip(round_key, int(sbox_result, 2).to_bytes(2, 'big')))
+        round_key_binary_array = convert_int_to_binary_array(round_key)
+        plaintext_binary_array = convert_int_to_binary_array(int(sbox_result, 2))
+        ciphertext = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
         
         return ciphertext
 
@@ -139,24 +144,30 @@ class SPN:
         keys = self.gen_keys(input_key)
 
         # final xor with round key
-        round_key = keys.pop()
-        xor_result = bytes(a ^ b for a, b in zip(round_key, ciphertext))
+        round_key = keys.pop(0)
+        round_key_binary_array = convert_int_to_binary_array(round_key)
+        ciphertext_binary_array = convert_int_to_binary_array(ciphertext)
+        xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, ciphertext_binary_array))
+        xor_result_array = split_16_bits_to_4_bit_int(xor_result)
 
         # final substitution layer
-        sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].unsub(int(xor_result.hex()[0], 16))
-        sbox_2_result = self.layers[f'layer {self.num_layers}']['sbox 2'].unsub(int(xor_result.hex()[1], 16))
-        sbox_3_result = self.layers[f'layer {self.num_layers}']['sbox 3'].unsub(int(xor_result.hex()[2], 16))
-        sbox_4_result = self.layers[f'layer {self.num_layers}']['sbox 4'].unsub(int(xor_result.hex()[3], 16))
+        sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].unsub(xor_result_array[0])
+        sbox_2_result = self.layers[f'layer {self.num_layers}']['sbox 2'].unsub(xor_result_array[1])
+        sbox_3_result = self.layers[f'layer {self.num_layers}']['sbox 3'].unsub(xor_result_array[2])
+        sbox_4_result = self.layers[f'layer {self.num_layers}']['sbox 4'].unsub(xor_result_array[3])
         sbox_result = format(sbox_1_result, '04b') + format(sbox_2_result, '04b') + format(sbox_3_result, '04b') + format(sbox_4_result, '04b')
+        sbox_result = int(sbox_result, base=2)
 
         # num_layers - 1
         for round in range(self.num_layers - 1, 0, -1):
             # xor with round key
-            round_key = keys.pop()
-            xor_result = bytes(a ^ b for a, b in zip(round_key, int(sbox_result, 2).to_bytes(2, 'big')))
+            round_key = keys.pop(0)
+            round_key_binary_array = convert_int_to_binary_array(round_key)
+            ciphertext_binary_array = convert_int_to_binary_array(sbox_result)
+            xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, ciphertext_binary_array))
 
             # permutation layer
-            pbox_result = self.layers[f'layer {round}']['pbox'].unperm(int(xor_result.hex(), 16))
+            pbox_result = self.layers[f'layer {round}']['pbox'].unperm(xor_result)
             
             # substitution layer
             sbox_1_result = self.layers[f'layer {round}']['sbox 1'].unsub(int(format(pbox_result, '016b')[0:4], 2))
@@ -164,43 +175,15 @@ class SPN:
             sbox_3_result = self.layers[f'layer {round}']['sbox 3'].unsub(int(format(pbox_result, '016b')[8:12], 2))
             sbox_4_result = self.layers[f'layer {round}']['sbox 4'].unsub(int(format(pbox_result, '016b')[12:], 2))
             sbox_result = format(sbox_1_result, '04b') + format(sbox_2_result, '04b') + format(sbox_3_result, '04b') + format(sbox_4_result, '04b')
+            sbox_result = int(sbox_result, base=2)
 
-        round_key = keys.pop()
-        plaintext = bytes(a ^ b for a, b in zip(round_key, int(sbox_result, 2).to_bytes(2, 'big')))
+        round_key = keys.pop(0)
+        round_key_binary_array = convert_int_to_binary_array(round_key)
+        ciphertext_binary_array = convert_int_to_binary_array(sbox_result)
+        plaintext = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, ciphertext_binary_array))
 
         return plaintext
 
     # current implementation returns the same keys multiple times
     def gen_keys(self, input_key) -> list:
-        return [input_key for round in range(self.num_layers)]
-
-
-# key = urandom(2)
-# # print(key)
-# # print(key.hex())
-# # print(int(key.hex(), 16))
-
-# plaintext = urandom(2)
-# print('plaintext (bytes):')
-# print(plaintext)
-# print('plaintext (hex):')
-# print(plaintext.hex())
-# print('plaintext (int):')
-# print(int(plaintext.hex(), 16))
-
-# # print(plaintext^key)
-# print('='*25)
-# print()
-
-# asspeeann = SPN()
-# ctext = asspeeann.encrypt(plaintext=plaintext, input_key=key)
-# print(f'ciphertext:\t\t{ctext.hex()}')
-# # print(ctext.hex())
-# print(f'ciphertext int:\t\t{int(ctext.hex(), 16)}')
-# # print(int(ctext.hex(), 16))
-# print()
-# ptext = asspeeann.decrypt(ciphertext=ctext, input_key=key)
-# print(f'plaintext:\t\t{ptext.hex()}')
-# # print(ptext.hex())
-# print(f'plaintext int:\t\t{int(ptext.hex(), 16)}')
-# print(int(ptext.hex(), 16))
+        return [input_key for round in range(self.num_layers+1)]

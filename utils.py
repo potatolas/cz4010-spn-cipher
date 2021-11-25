@@ -1,3 +1,5 @@
+import math
+
 # print bits as string/list with formatting, integer input
 def print_bits(bits, length=4) -> str:
     return format(bits, f'0{length}b')
@@ -15,7 +17,7 @@ def print_bit(bits, length=4) -> None:
         print(print_bits(bits, length))
 
 def convert_int_to_binary_array(target):
-    target_string = bin(target)[2:]
+    target_string = format(target, '016b')
     target_string_list = list(target_string)
     target_int_list = []
     for char in target_string_list:
@@ -36,6 +38,47 @@ def convert_binary_array_to_int(target):
     
     target_int = int(target_string, base=2)
     return target_int
+
+def split_16_bits_to_4_bit_int(target):
+    target_string = format(target, '016b')
+    result_string_array = [target_string[0:4], target_string[4:8], target_string[8:12], target_string[12:16]]
+    result_array = []
+    for string in result_string_array:
+        result_array.append(int(string, base=2))
+    return result_array
+
+# def split_plaintext_into_array(plaintext):
+#     ascii_plaintext = "" 
+#     for char in list(plaintext):
+#         ascii_plaintext += bin(ord(char))[2:]
+
+#     string_array = []
+#     print(ascii_plaintext)
+
+#     num_of_zeros = 16 - (len(ascii_plaintext) % 16)
+
+#     ascii_plaintext = num_of_zeros*'0' + ascii_plaintext
+
+#     print(ascii_plaintext)
+
+#     slices = math.ceil(len(ascii_plaintext)/16)
+#     start_index = 0
+#     end_index = 16
+#     while(slices > 0):
+#         string_array.append(ascii_plaintext[start_index:end_index])
+#         start_index += 16
+#         end_index += 16
+#         if(end_index > len(ascii_plaintext) - 1):
+#             end_index = len(ascii_plaintext)
+#         slices -= 1
+
+#     print(string_array)
+
+#     int_array = []
+#     for string in string_array:
+#         int_array.append(int(string, base=2))
+
+#     return int_array
 
 # print_bit(15)
 # print_bit([0, 1, 7, 13])
