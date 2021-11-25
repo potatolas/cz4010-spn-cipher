@@ -1,33 +1,24 @@
 from random import shuffle
 from os import urandom
+from utils import *
 
 integers = [i for i in range(16)]
 
-# print bits as string/list with formatting, integer input
-def print_bits(bits, length=4) -> str:
-    return format(bits, f'0{length}b')
-
-def print_bits_list(bits_list, length=4) -> str:
-    result = ""
-    for bits in bits_list:
-        result += ' ' + format(bits, f'0{length}b')
-    return result.strip()
-
-def print_bit(bits, length=4) -> None:
-    if type(bits) != int:
-        print(print_bits_list(list(bits), length))
-    else:
-        print(print_bits(bits, length))
-
-# print_bit(15)
-# print_bit([0, 1, 7, 13])
-
-
 # Substitution Box Class
 class SubBox:
-    def __init__(self) -> None:
-        shuffled = [integer for integer in integers]
-        shuffle(shuffled)
+    def __init__(self, type) -> None:
+        shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
+        if(type == 1):
+            shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
+        elif(type == 2):
+            shuffled = [4, 13, 8, 0, 11, 10, 3, 15, 7, 14, 9, 1, 6, 5, 2, 12]
+        elif(type == 3):
+            shuffled = [5, 14, 10, 9, 15, 8, 3, 1, 2, 11, 0, 13, 7, 12, 6, 4]
+        elif(type == 4):
+            shuffled = [10, 8, 0, 5, 12, 4, 11, 3, 6, 1, 7, 13, 14, 9, 2, 15]
+        else:
+            shuffled = [integer for integer in integers]
+            shuffle(shuffled)
 
         # mapping contains original:substitute (int:int)
         self.mapping = {integers[i]:shuffled[i] for i in range(len(integers))}
@@ -40,34 +31,17 @@ class SubBox:
     def unsub(self, input_block) -> int:
         return list(self.mapping.keys())[list(self.mapping.values()).index(input_block)]
 
-# sbox = SubBox()
-
-# print_bit(sbox.mapping.values())
-# print(sbox.mapping.values())
-
-# var = 0b0
-# result = sbox.sub(var)
-# print_bit(result)
-# print_bit(sbox.unsub(result))
-# print()
-# print_bit(sbox.mapping.keys())
-# print_bit(sbox.mapping.values())
-
+# Permutation Box Class
 class PermBox:
     def __init__(self) -> None:
         # new position of bit no.
         # eg. [2, 3, 1] means [bit 2, bit 3, bit 1]
-        self.position = [i for i in range(16)]
-        shuffle(self.position)
+        self.position = [2, 15, 8, 13, 3, 12, 0, 9, 5, 4, 11, 7, 10, 14, 6, 1]
 
     # 16-bit length integer input
     def perm(self, bit_input) -> int:
         # input as list of 16 bits
         bit_array = [bit for bit in format(bit_input, '016b')]
-        # print(bit_input) # debug
-        # print(len(bit_array)) # debug
-        # print(len(self.position)) # debug
-        # swap positions of bits
         result = [bit_array[self.position[i]] for i in range(len(bit_array))]
             
         # output as str of 16 bits
@@ -93,27 +67,9 @@ class PermBox:
 
         return int(bit_output, 2)
 
-# pbox = PermBox()
-
-# print(f'positions: {pbox.position}\n')
-
-# intput = 0b1001101011010111 # 39639
-# print(f'{intput}')
-# print_bit(intput, 16)
-# print()
-
-# permuted = pbox.perm(intput)
-# print(f'{permuted}')
-# print_bit(permuted, 16)
-# print()
-
-# unpermuted = pbox.unperm(permuted) # 39639
-# print(f'{unpermuted}')
-# print_bit(unpermuted, 16)
-
 class SPN:
     # minimum num_layers = 2
-    def __init__(self, num_layers=3) -> None:
+    def __init__(self, num_layers=4) -> None:
         self.num_layers = num_layers
         self.layers = {}
 
@@ -121,20 +77,20 @@ class SPN:
         for layer in range(1, num_layers):
             self.layers[f'layer {layer}'] = {}
 
-            self.layers[f'layer {layer}']['sbox 1'] = SubBox()
-            self.layers[f'layer {layer}']['sbox 2'] = SubBox()
-            self.layers[f'layer {layer}']['sbox 3'] = SubBox()
-            self.layers[f'layer {layer}']['sbox 4'] = SubBox()
+            self.layers[f'layer {layer}']['sbox 1'] = SubBox(1)
+            self.layers[f'layer {layer}']['sbox 2'] = SubBox(2)
+            self.layers[f'layer {layer}']['sbox 3'] = SubBox(3)
+            self.layers[f'layer {layer}']['sbox 4'] = SubBox(4)
 
             self.layers[f'layer {layer}']['pbox'] = PermBox()
 
         # final layer is a substitution layer
         self.layers[f'layer {num_layers}'] = {}
 
-        self.layers[f'layer {num_layers}']['sbox 1'] = SubBox()
-        self.layers[f'layer {num_layers}']['sbox 2'] = SubBox()
-        self.layers[f'layer {num_layers}']['sbox 3'] = SubBox()
-        self.layers[f'layer {num_layers}']['sbox 4'] = SubBox()
+        self.layers[f'layer {num_layers}']['sbox 1'] = SubBox(1)
+        self.layers[f'layer {num_layers}']['sbox 2'] = SubBox(2)
+        self.layers[f'layer {num_layers}']['sbox 3'] = SubBox(3)
+        self.layers[f'layer {num_layers}']['sbox 4'] = SubBox(4)
 
     # assume input_key is 16-bit, same key used for all rounds (layers)
     # inputs are bytes type?
@@ -142,7 +98,10 @@ class SPN:
         keys = self.gen_keys(input_key)
 
         round_key = keys.pop(0)
-        xor_result = bytes(a ^ b for a, b in zip(round_key, plaintext))
+        round_key_binary_array = convert_int_to_binary_array(round_key)
+        plaintext_binary_array = convert_int_to_binary_array(plaintext)
+        xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
+        print(xor_result)
 
         # num_layers - 1
         for round in range(1, self.num_layers):
@@ -213,35 +172,35 @@ class SPN:
 
     # current implementation returns the same keys multiple times
     def gen_keys(self, input_key) -> list:
-        return [input_key for round in range(self.num_layers + 1)]
+        return [input_key for round in range(self.num_layers)]
 
 
-key = urandom(2)
-# print(key)
-# print(key.hex())
-# print(int(key.hex(), 16))
+# key = urandom(2)
+# # print(key)
+# # print(key.hex())
+# # print(int(key.hex(), 16))
 
-plaintext = urandom(2)
-print('plaintext (bytes):')
-print(plaintext)
-print('plaintext (hex):')
-print(plaintext.hex())
-print('plaintext (int):')
-print(int(plaintext.hex(), 16))
+# plaintext = urandom(2)
+# print('plaintext (bytes):')
+# print(plaintext)
+# print('plaintext (hex):')
+# print(plaintext.hex())
+# print('plaintext (int):')
+# print(int(plaintext.hex(), 16))
 
-# print(plaintext^key)
-print('='*25)
-print()
+# # print(plaintext^key)
+# print('='*25)
+# print()
 
-asspeeann = SPN()
-ctext = asspeeann.encrypt(plaintext=plaintext, input_key=key)
-print(f'ciphertext:\t\t{ctext.hex()}')
-# print(ctext.hex())
-print(f'ciphertext int:\t\t{int(ctext.hex(), 16)}')
-# print(int(ctext.hex(), 16))
-print()
-ptext = asspeeann.decrypt(ciphertext=ctext, input_key=key)
-print(f'plaintext:\t\t{ptext.hex()}')
-# print(ptext.hex())
-print(f'plaintext int:\t\t{int(ptext.hex(), 16)}')
+# asspeeann = SPN()
+# ctext = asspeeann.encrypt(plaintext=plaintext, input_key=key)
+# print(f'ciphertext:\t\t{ctext.hex()}')
+# # print(ctext.hex())
+# print(f'ciphertext int:\t\t{int(ctext.hex(), 16)}')
+# # print(int(ctext.hex(), 16))
+# print()
+# ptext = asspeeann.decrypt(ciphertext=ctext, input_key=key)
+# print(f'plaintext:\t\t{ptext.hex()}')
+# # print(ptext.hex())
+# print(f'plaintext int:\t\t{int(ptext.hex(), 16)}')
 # print(int(ptext.hex(), 16))
