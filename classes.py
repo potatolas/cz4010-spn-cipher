@@ -8,6 +8,7 @@ integers = [i for i in range(16)]
 class SubBox:
     def __init__(self) -> None:
         shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
+        #shuffled = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7]
         # if(type == 1):
         #     shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
         # elif(type == 2):
