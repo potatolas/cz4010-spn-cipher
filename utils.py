@@ -17,10 +17,11 @@ def print_bit(bits, length=4) -> None:
         print(print_bits(bits, length))
 
 def convert_int_to_binary_array(target, length=16):
-    if(length == 16):
-        target_string = format(target, '016b')
-    if(length == 4):
-        target_string = format(target, '04b')
+    # if(length == 16):
+    #     target_string = format(target, '016b')
+    # if(length == 4):
+    #     target_string = format(target, '04b')
+    target_string = format(target, f'0{length}b')
 
     target_string_list = list(target_string)
     target_int_list = []
@@ -43,9 +44,10 @@ def convert_binary_array_to_int(target):
     target_int = int(target_string, base=2)
     return target_int
 
-def split_16_bits_to_4_bit_int(target):
-    target_string = format(target, '016b')
-    result_string_array = [target_string[0:4], target_string[4:8], target_string[8:12], target_string[12:16]]
+def split_bits_to_4_bit_int(target, length=16):
+    target_string = format(target, f'0{length}b')
+    # result_string_array = [target_string[0:4], target_string[4:8], target_string[8:12], target_string[12:16]]
+    result_string_array = [target_string[i*4:i*4+4] for i in range(length//4)]
     result_array = []
     for string in result_string_array:
         result_array.append(int(string, base=2))

@@ -7,8 +7,9 @@ integers = [i for i in range(16)]
 # Substitution Box Class
 class SubBox:
     def __init__(self) -> None:
-        # shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        shuffled = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7] # des
+        shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
+        # shuffled = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7] # des
+        # shuffled = [5, 0, 15, 13, 1, 4, 10, 7, 3, 8, 6, 14, 2, 12, 11, 9] # latest
         # if(type == 1):
         #     shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
         # elif(type == 2):
@@ -37,8 +38,9 @@ class PermBox:
     def __init__(self) -> None:
         # new position of bit no.
         # eg. [2, 3, 1] means [bit 2, bit 3, bit 1]
-        # self.position = [2, 15, 8, 13, 3, 12, 0, 9, 5, 4, 11, 7, 10, 14, 6, 1]
-        self.position = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15] # des
+        self.position = [2, 15, 8, 13, 3, 12, 0, 9, 5, 4, 11, 7, 10, 14, 6, 1]
+        # self.position = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15] # des
+        # self.position = [11, 5, 15, 14, 8, 0, 10, 3, 9, 7, 2, 6, 4, 12, 1, 13] # latest
 
     # 16-bit length integer input
     def perm(self, bit_input) -> int:
@@ -103,7 +105,7 @@ class SPN:
         round_key_binary_array = convert_int_to_binary_array(round_key)
         plaintext_binary_array = convert_int_to_binary_array(plaintext)
         xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
-        xor_result_array = split_16_bits_to_4_bit_int(xor_result)
+        xor_result_array = split_bits_to_4_bit_int(xor_result)
 
         # num_layers - 1
         for round in range(1, self.num_layers):
@@ -124,7 +126,7 @@ class SPN:
             round_key_binary_array = convert_int_to_binary_array(round_key)
             plaintext_binary_array = convert_int_to_binary_array(pbox_result)
             xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
-            xor_result_array = split_16_bits_to_4_bit_int(xor_result)
+            xor_result_array = split_bits_to_4_bit_int(xor_result)
 
         # final substitution layer
         sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].sub(xor_result_array[0])
@@ -150,7 +152,7 @@ class SPN:
         round_key_binary_array = convert_int_to_binary_array(round_key)
         ciphertext_binary_array = convert_int_to_binary_array(ciphertext)
         xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, ciphertext_binary_array))
-        xor_result_array = split_16_bits_to_4_bit_int(xor_result)
+        xor_result_array = split_bits_to_4_bit_int(xor_result)
 
         # final substitution layer
         sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].unsub(xor_result_array[0])
@@ -188,5 +190,5 @@ class SPN:
 
     # current implementation returns the same keys multiple times
     def gen_keys(self, input_key) -> list:
-        # return [input_key for round in range(self.num_layers+1)]
-        return [40000, 11111, 23147, 61053, 1010]
+        return [input_key for round in range(self.num_layers+1)]
+        # return [40000, 11111, 23147, 61053, 1010]
