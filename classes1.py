@@ -6,19 +6,19 @@ integers = [i for i in range(16)]
 
 # Substitution Box Class
 class SubBox:
-    def __init__(self, type) -> None:
+    def __init__(self) -> None:
         shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        if(type == 1):
-            shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        elif(type == 2):
-            shuffled = [4, 13, 8, 0, 11, 10, 3, 15, 7, 14, 9, 1, 6, 5, 2, 12]
-        elif(type == 3):
-            shuffled = [5, 14, 10, 9, 15, 8, 3, 1, 2, 11, 0, 13, 7, 12, 6, 4]
-        elif(type == 4):
-            shuffled = [10, 8, 0, 5, 12, 4, 11, 3, 6, 1, 7, 13, 14, 9, 2, 15]
-        else:
-            shuffled = [integer for integer in integers]
-            shuffle(shuffled)
+        # if(type == 1):
+        #     shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
+        # elif(type == 2):
+        #     shuffled = [4, 13, 8, 0, 11, 10, 3, 15, 7, 14, 9, 1, 6, 5, 2, 12]
+        # elif(type == 3):
+        #     shuffled = [5, 14, 10, 9, 15, 8, 3, 1, 2, 11, 0, 13, 7, 12, 6, 4]
+        # elif(type == 4):
+        #     shuffled = [10, 8, 0, 5, 12, 4, 11, 3, 6, 1, 7, 13, 14, 9, 2, 15]
+        # else:
+        #     shuffled = [integer for integer in integers]
+        #     shuffle(shuffled)
 
         # mapping contains original:substitute (int:int)
         self.mapping = {integers[i]:shuffled[i] for i in range(len(integers))}
@@ -77,20 +77,20 @@ class SPN:
         for layer in range(1, num_layers):
             self.layers[f'layer {layer}'] = {}
 
-            self.layers[f'layer {layer}']['sbox 1'] = SubBox(1)
-            self.layers[f'layer {layer}']['sbox 2'] = SubBox(2)
-            self.layers[f'layer {layer}']['sbox 3'] = SubBox(3)
-            self.layers[f'layer {layer}']['sbox 4'] = SubBox(4)
+            self.layers[f'layer {layer}']['sbox 1'] = SubBox()
+            self.layers[f'layer {layer}']['sbox 2'] = SubBox()
+            self.layers[f'layer {layer}']['sbox 3'] = SubBox()
+            self.layers[f'layer {layer}']['sbox 4'] = SubBox()
 
             self.layers[f'layer {layer}']['pbox'] = PermBox()
 
         # final layer is a substitution layer
         self.layers[f'layer {num_layers}'] = {}
 
-        self.layers[f'layer {num_layers}']['sbox 1'] = SubBox(1)
-        self.layers[f'layer {num_layers}']['sbox 2'] = SubBox(2)
-        self.layers[f'layer {num_layers}']['sbox 3'] = SubBox(3)
-        self.layers[f'layer {num_layers}']['sbox 4'] = SubBox(4)
+        self.layers[f'layer {num_layers}']['sbox 1'] = SubBox()
+        self.layers[f'layer {num_layers}']['sbox 2'] = SubBox()
+        self.layers[f'layer {num_layers}']['sbox 3'] = SubBox()
+        self.layers[f'layer {num_layers}']['sbox 4'] = SubBox()
 
     # assume input_key is 16-bit, same key used for all rounds (layers)
     # inputs are bytes type?
