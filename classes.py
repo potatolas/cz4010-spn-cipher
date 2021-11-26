@@ -7,8 +7,8 @@ integers = [i for i in range(16)]
 # Substitution Box Class
 class SubBox:
     def __init__(self) -> None:
-        shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        #shuffled = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7]
+        # shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
+        shuffled = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7] # des
         # if(type == 1):
         #     shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
         # elif(type == 2):
@@ -37,7 +37,8 @@ class PermBox:
     def __init__(self) -> None:
         # new position of bit no.
         # eg. [2, 3, 1] means [bit 2, bit 3, bit 1]
-        self.position = [2, 15, 8, 13, 3, 12, 0, 9, 5, 4, 11, 7, 10, 14, 6, 1]
+        # self.position = [2, 15, 8, 13, 3, 12, 0, 9, 5, 4, 11, 7, 10, 14, 6, 1]
+        self.position = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15] # des
 
     # 16-bit length integer input
     def perm(self, bit_input) -> int:
@@ -187,4 +188,5 @@ class SPN:
 
     # current implementation returns the same keys multiple times
     def gen_keys(self, input_key) -> list:
-        return [input_key for round in range(self.num_layers+1)]
+        # return [input_key for round in range(self.num_layers+1)]
+        return [40000, 11111, 23147, 61053, 1010]
