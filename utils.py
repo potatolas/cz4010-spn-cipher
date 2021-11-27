@@ -52,39 +52,3 @@ def split_bits_to_4_bit_int(target, length=16):
     for string in result_string_array:
         result_array.append(int(string, base=2))
     return result_array
-
-# def split_plaintext_into_array(plaintext):
-#     ascii_plaintext = "" 
-#     for char in list(plaintext):
-#         ascii_plaintext += bin(ord(char))[2:]
-
-#     string_array = []
-#     print(ascii_plaintext)
-
-#     num_of_zeros = 16 - (len(ascii_plaintext) % 16)
-
-#     ascii_plaintext = num_of_zeros*'0' + ascii_plaintext
-
-#     print(ascii_plaintext)
-
-#     slices = math.ceil(len(ascii_plaintext)/16)
-#     start_index = 0
-#     end_index = 16
-#     while(slices > 0):
-#         string_array.append(ascii_plaintext[start_index:end_index])
-#         start_index += 16
-#         end_index += 16
-#         if(end_index > len(ascii_plaintext) - 1):
-#             end_index = len(ascii_plaintext)
-#         slices -= 1
-
-#     print(string_array)
-
-#     int_array = []
-#     for string in string_array:
-#         int_array.append(int(string, base=2))
-
-#     return int_array
-
-# print_bit(15)
-# print_bit([0, 1, 7, 13])
