@@ -85,7 +85,7 @@ We then created 2 separate notebooks, SPNetwork.ipynb to showcase the implementa
 ## LinearCryptanalysis.ipynb
 
 1. Analysis of Cipher Components
-    - We generated the linear approximation table for the Substition Box in the SPN
+    - We generated the linear approximation table for the Substitution Box in the SPN
 2. Constructing Linear Approximations
     - Making use of the data from 1., we derived the linear equations for use in the Known Plaintext Attack for 2 subkeys corresponding to the first 8-bits and the last 8-bits of a 16-bit round key
     - The bias is then calculated for each subkey, and the highest subkeys are selected
