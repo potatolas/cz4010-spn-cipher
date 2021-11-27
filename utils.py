@@ -46,7 +46,6 @@ def convert_binary_array_to_int(target):
 
 def split_bits_to_4_bit_int(target, length=16):
     target_string = format(target, f'0{length}b')
-    # result_string_array = [target_string[0:4], target_string[4:8], target_string[8:12], target_string[12:16]]
     result_string_array = [target_string[i*4:i*4+4] for i in range(length//4)]
     result_array = []
     for string in result_string_array:
