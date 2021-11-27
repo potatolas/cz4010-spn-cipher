@@ -50,3 +50,43 @@ def test_partial_key_eqn(u_array, p_array):
                 keyspace[key] += 1
     
     return keyspace
+
+def generate_linear_approx_table(linear_approx_table, sbox):
+    # initialise all to -8
+    for input_mask in range(16):
+        for output_mask in range(16):
+            linear_approx_table[(input_mask, output_mask)] = -8
+
+    # generate combinations of input bits and output bits
+    for input_mask in range(16):
+        for output_mask in range(16):
+            input_mask_array = convert_int_to_binary_array(input_mask, 4)
+            output_mask_array = convert_int_to_binary_array(output_mask, 4)
+
+            for sbox_input in range(16):
+                input_array = convert_int_to_binary_array(sbox_input, 4)
+                sbox_output = sbox.sub(sbox_input)
+                output_array = convert_int_to_binary_array(sbox_output, 4)
+
+                LHS_array = []
+                RHS_array = []
+
+                for i in range(4):
+                    if input_mask_array[i] == 1:
+                        LHS_array.append(input_array[i])
+                    if output_mask_array[i] == 1:
+                        RHS_array.append(output_array[i])
+
+                LHS_result = 0
+                RHS_result = 0
+                
+                for bit in LHS_array:
+                    LHS_result = LHS_result ^ bit
+
+                for bit in RHS_array:
+                    RHS_result = RHS_result ^ bit
+                
+                if LHS_result == RHS_result:
+                    linear_approx_table[(input_mask, output_mask)] += 1
+    
+    return linear_approx_table

@@ -1,4 +1,4 @@
-import math
+import pandas as pd
 
 # print bits as string/list with formatting, integer input
 def print_bits(bits, length=4) -> str:
@@ -52,3 +52,19 @@ def split_bits_to_4_bit_int(target, length=16):
     for string in result_string_array:
         result_array.append(int(string, base=2))
     return result_array
+
+def visualise_linear_approx_table(linear_approx_table):
+    columns = []
+    table = {}
+
+    for i in range(16):
+        columns.append([])
+
+    for key, value in linear_approx_table.items():
+        columns[key[1]].append(value)
+
+    for i in range(16):
+        table[i] = columns[i]
+
+    linear_approx_table_df = pd.DataFrame(table)
+    return linear_approx_table_df
