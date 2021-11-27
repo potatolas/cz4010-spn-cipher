@@ -20005,3 +20005,14 @@ known_ciphertext = [
 61017,
 65058,
 ]
+
+# plaintext_list = []
+# ciphertext_list = []
+# num_plaintext = 10000
+
+# while len(plaintext_list) < num_plaintext:
+#     plaintext = random.randint(0, 65535)
+#     if plaintext not in plaintext_list:
+#         plaintext_list.append(plaintext)
+#         ciphertext = spn.encrypt(plaintext, master_key)
+#         ciphertext_list.append(ciphertext)

@@ -1,6 +1,7 @@
 from classes import *
 from utils import *
 from data import known_ciphertext, known_plaintext
+import pandas as pd
 
 def test_partial_key_eqn(u_array, p_array, mode):
     keyspace = {}
@@ -21,7 +22,6 @@ def test_partial_key_eqn(u_array, p_array, mode):
                 # pad front of key with 8 zeros
                 pad.extend(key_binary_array)
                 key_binary_array = pad
-                print(key_binary_array)
 
             ciphertext_binary_array = convert_int_to_binary_array(ciphertext)
 
@@ -51,6 +51,30 @@ def test_partial_key_eqn(u_array, p_array, mode):
                 keyspace[key] += 1
     
     return keyspace
+
+def generate_test_keys(first_8bit_array, last_8bit_array):
+    test_keys = []
+    for i in range(len(first_8bit_array)):
+        for j in range(len(last_8bit_array)):
+            temp_key = int(format(first_8bit_array[i], f'08b') + format(last_8bit_array[j], f'08b'), 2)
+            test_keys.append(temp_key)
+    return test_keys
+
+def test_encryption(known_plaintext, known_ciphertext, test_keys):
+    spn = SPN()
+    for i in range(len(test_keys)):
+        counter = 0
+        for j in range(len(known_plaintext)):
+            if spn.encrypt(known_plaintext[j], test_keys[i]) == known_ciphertext[j]:
+                counter += 1
+            else:
+                break
+        if(counter == 100):
+            print("Key Found: " + str(test_keys[i]))
+            return test_keys[i]
+    
+    print("No key is valid.")
+    return -1
 
 def generate_linear_approx_table(linear_approx_table, sbox):
     # initialise all to -8
@@ -91,3 +115,13 @@ def generate_linear_approx_table(linear_approx_table, sbox):
                     linear_approx_table[(input_mask, output_mask)] += 1
     
     return linear_approx_table
+
+def calculate_bias(keyspace, top):
+    subkeys = []
+    bias = []
+
+    for key, value in keyspace.items():
+        subkeys.append(key)
+        bias.append(float(f'{abs(value-5000)/10000:.4f}'))
+
+    return pd.DataFrame({'subkey':subkeys, 'bias':bias}).sort_values("bias", ascending=False).head(25)

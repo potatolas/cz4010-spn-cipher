@@ -8,21 +8,6 @@ integers = [i for i in range(16)]
 class SubBox:
     def __init__(self) -> None:
         shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        # shuffled = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7] # des
-        # shuffled = [5, 0, 15, 13, 1, 4, 10, 7, 3, 8, 6, 14, 2, 12, 11, 9] # latest
-        # if(type == 1):
-        #     shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        # elif(type == 2):
-        #     shuffled = [4, 13, 8, 0, 11, 10, 3, 15, 7, 14, 9, 1, 6, 5, 2, 12]
-        # elif(type == 3):
-        #     shuffled = [5, 14, 10, 9, 15, 8, 3, 1, 2, 11, 0, 13, 7, 12, 6, 4]
-        # elif(type == 4):
-        #     shuffled = [10, 8, 0, 5, 12, 4, 11, 3, 6, 1, 7, 13, 14, 9, 2, 15]
-        # else:
-        #     shuffled = [integer for integer in integers]
-        #     shuffle(shuffled)
-
-        # mapping contains original:substitute (int:int)
         self.mapping = {integers[i]:shuffled[i] for i in range(len(integers))}
 
     # integer input
@@ -39,8 +24,6 @@ class PermBox:
         # new position of bit no.
         # eg. [2, 3, 1] means [bit 2, bit 3, bit 1]
         self.position = [2, 15, 8, 13, 3, 12, 0, 9, 5, 4, 11, 7, 10, 14, 6, 1]
-        # self.position = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15] # des
-        # self.position = [11, 5, 15, 14, 8, 0, 10, 3, 9, 7, 2, 6, 4, 12, 1, 13] # latest
 
     # 16-bit length integer input
     def perm(self, bit_input) -> int:
@@ -191,4 +174,3 @@ class SPN:
     # current implementation returns the same keys multiple times
     def gen_keys(self, input_key) -> list:
         return [input_key for round in range(self.num_layers+1)]
-        # return [40000, 11111, 23147, 61053, 1010]

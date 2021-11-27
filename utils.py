@@ -68,3 +68,6 @@ def visualise_linear_approx_table(linear_approx_table):
 
     linear_approx_table_df = pd.DataFrame(table)
     return linear_approx_table_df
+
+def visualise_top_25_subkeys(linear_attack_bias_df):
+    return linear_attack_bias_df.style.hide_index()
