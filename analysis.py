@@ -2,7 +2,7 @@ from classes import *
 from utils import *
 from data import known_ciphertext, known_plaintext
 
-def test_partial_key_eqn(u_array, p_array):
+def test_partial_key_eqn(u_array, p_array, mode):
     keyspace = {}
     sbox = SubBox()
     for i in range(256):
@@ -10,41 +10,42 @@ def test_partial_key_eqn(u_array, p_array):
 
     for key in keyspace.keys():
         for index, ciphertext in enumerate(known_ciphertext):
+
             key_binary_array = convert_int_to_binary_array(key, 8)
-            # pad key to 16 bits
-            key_binary_array.extend([0 for i in range(16 - len(key_binary_array))])
+            pad = [0 for i in range(8)]
+            
+            if(mode == "first"):
+                # pad back of key with 8 zeros
+                key_binary_array.extend(pad)
+            elif(mode == "last"):
+                # pad front of key with 8 zeros
+                pad.extend(key_binary_array)
+                key_binary_array = pad
+                print(key_binary_array)
+
             ciphertext_binary_array = convert_int_to_binary_array(ciphertext)
 
             # reverse xor
             reverse_xor_result = convert_binary_array_to_int(xor_binary_arrays(key_binary_array, ciphertext_binary_array))
 
-            partial_ciphertext_array = split_bits_to_4_bit_int(reverse_xor_result)[:2]
+            partial_ciphertext_array = split_bits_to_4_bit_int(reverse_xor_result)
 
-            # reverse sub
-            reverse_sub_result = [sbox.unsub(partial_ciphertext_array[0]), sbox.unsub(partial_ciphertext_array[1])]
+            reverse_sub_result = [sbox.unsub(partial_ciphertext_array[0]), sbox.unsub(partial_ciphertext_array[1]), sbox.unsub(partial_ciphertext_array[2]), sbox.unsub(partial_ciphertext_array[3])]
 
             reverse_sub_array = convert_int_to_binary_array(reverse_sub_result[0], 4)
             reverse_sub_array.extend(convert_int_to_binary_array(reverse_sub_result[1], 4))
-            
-            # xor result
-            # result = reverse_sub_array[1]
-            # result = result ^ reverse_sub_array[4]
-            # result = result ^ reverse_sub_array[5]
-            # result = result ^ reverse_sub_array[6]
-            
+            reverse_sub_array.extend(convert_int_to_binary_array(reverse_sub_result[2], 4))
+            reverse_sub_array.extend(convert_int_to_binary_array(reverse_sub_result[3], 4))
+
             result = 0
 
             for i in u_array:
-                result = result ^ reverse_sub_array[i]
+                result = result ^ reverse_sub_array[i-1]
 
             plaintext_binary_array = convert_int_to_binary_array(known_plaintext[index])
 
-            # result = result ^ plaintext_binary_array[1]
-            # result = result ^ plaintext_binary_array[2]
-            # result = result ^ plaintext_binary_array[3]
-
             for i in p_array:
-                result = result ^ plaintext_binary_array[i]
+                result = result ^ plaintext_binary_array[i-1]
 
             if result == 0:
                 keyspace[key] += 1
