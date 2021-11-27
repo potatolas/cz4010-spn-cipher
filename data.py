@@ -20009,6 +20009,7 @@ known_ciphertext = [
 # plaintext_list = []
 # ciphertext_list = []
 # num_plaintext = 10000
+# master_key = 42069
 
 # while len(plaintext_list) < num_plaintext:
 #     plaintext = random.randint(0, 65535)
