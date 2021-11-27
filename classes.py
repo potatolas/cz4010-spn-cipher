@@ -8,19 +8,6 @@ integers = [i for i in range(16)]
 class SubBox:
     def __init__(self) -> None:
         shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        # if(type == 1):
-        #     shuffled = [0, 14, 7, 5, 13, 10, 11, 6, 2, 8, 12, 1, 15, 4, 3, 9]
-        # elif(type == 2):
-        #     shuffled = [4, 13, 8, 0, 11, 10, 3, 15, 7, 14, 9, 1, 6, 5, 2, 12]
-        # elif(type == 3):
-        #     shuffled = [5, 14, 10, 9, 15, 8, 3, 1, 2, 11, 0, 13, 7, 12, 6, 4]
-        # elif(type == 4):
-        #     shuffled = [10, 8, 0, 5, 12, 4, 11, 3, 6, 1, 7, 13, 14, 9, 2, 15]
-        # else:
-        #     shuffled = [integer for integer in integers]
-        #     shuffle(shuffled)
-
-        # mapping contains original:substitute (int:int)
         self.mapping = {integers[i]:shuffled[i] for i in range(len(integers))}
 
     # integer input
@@ -101,7 +88,7 @@ class SPN:
         round_key_binary_array = convert_int_to_binary_array(round_key)
         plaintext_binary_array = convert_int_to_binary_array(plaintext)
         xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
-        xor_result_array = split_16_bits_to_4_bit_int(xor_result)
+        xor_result_array = split_bits_to_4_bit_int(xor_result)
 
         # num_layers - 1
         for round in range(1, self.num_layers):
@@ -122,7 +109,7 @@ class SPN:
             round_key_binary_array = convert_int_to_binary_array(round_key)
             plaintext_binary_array = convert_int_to_binary_array(pbox_result)
             xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, plaintext_binary_array))
-            xor_result_array = split_16_bits_to_4_bit_int(xor_result)
+            xor_result_array = split_bits_to_4_bit_int(xor_result)
 
         # final substitution layer
         sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].sub(xor_result_array[0])
@@ -148,7 +135,7 @@ class SPN:
         round_key_binary_array = convert_int_to_binary_array(round_key)
         ciphertext_binary_array = convert_int_to_binary_array(ciphertext)
         xor_result = convert_binary_array_to_int(xor_binary_arrays(round_key_binary_array, ciphertext_binary_array))
-        xor_result_array = split_16_bits_to_4_bit_int(xor_result)
+        xor_result_array = split_bits_to_4_bit_int(xor_result)
 
         # final substitution layer
         sbox_1_result = self.layers[f'layer {self.num_layers}']['sbox 1'].unsub(xor_result_array[0])
