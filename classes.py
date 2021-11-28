@@ -80,7 +80,7 @@ class SPN:
         self.layers[f'layer {num_layers}']['sbox 4'] = SubBox()
 
     # assume input_key is 16-bit, same key used for all rounds (layers)
-    # inputs are bytes type?
+    # inputs are bytes type
     def encrypt(self, plaintext, input_key) -> bytes:
         keys = self.gen_keys(input_key)
 
@@ -99,8 +99,7 @@ class SPN:
             sbox_3_result = self.layers[f'layer {round}']['sbox 3'].sub(xor_result_array[2])
             sbox_4_result = self.layers[f'layer {round}']['sbox 4'].sub(xor_result_array[3])
             sbox_result = format(sbox_1_result, '04b') + format(sbox_2_result, '04b') + format(sbox_3_result, '04b') + format(sbox_4_result, '04b')
-            # print(sbox_result)
-            # print(int(sbox_result, 2))
+            
             # permutation layer
             pbox_result = self.layers[f'layer {round}']['pbox'].perm(int(sbox_result, 2))
 

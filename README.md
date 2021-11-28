@@ -27,7 +27,7 @@ CZ4010-SPN-Cipher
 | 
 └───analysis.py: functions related to linear cryptanalysis
 │   |   test_partial_key_eqn(): generates the number of times the equation holds true for each key
-|   |   generate_test_keys(): generates all possible test keys combinations by concatenating 2 subkeys
+|   |   generate_test_keys(): generates all possible test key combinations by concatenating 2 subkeys
 |   |   test_encryption(): verifies if a known plaintext matches a decrypted ciphertext
 |   |   generate_linear_approx_table(): generates the linear approximation table
 |   └───calculate_bias(): calculates the bias for each subkey
@@ -43,7 +43,7 @@ CZ4010-SPN-Cipher
 |
 └───README.md: project details
 |
-└───SPNetwork.ipynb: notebook detailing the usage of the project
+└───SPNetwork.ipynb: notebook detailing the usage of the SPN
 |
 └───utils.py: functions for general use
 |   |   print_bits: for debugging purposes
@@ -59,7 +59,7 @@ CZ4010-SPN-Cipher
 
 ## SPN Implementation
 
-For our project, we implemented 4 layers to the SPN, with identical subtition boxes and permutation boxes being used across the layers. As the SPN takes in 16-bit plaintext input, 4 substitution boxes are used in each layer. Each layer uses identical round keys.
+For our project, we implemented 4 layers to the SPN, with identical substitution boxes and permutation boxes being used across the layers. As the SPN takes in 16-bit plaintext input, 4 substitution boxes are used in each layer. Each layer uses identical round keys.
 
 ## Substitution Permutation Network
 

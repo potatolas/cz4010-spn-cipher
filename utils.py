@@ -17,10 +17,6 @@ def print_bit(bits, length=4) -> None:
         print(print_bits(bits, length))
 
 def convert_int_to_binary_array(target, length=16):
-    # if(length == 16):
-    #     target_string = format(target, '016b')
-    # if(length == 4):
-    #     target_string = format(target, '04b')
     target_string = format(target, f'0{length}b')
 
     target_string_list = list(target_string)
